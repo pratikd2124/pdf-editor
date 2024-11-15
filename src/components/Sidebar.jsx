@@ -41,7 +41,7 @@ const Sidebar = () => {
       { path: '/pdf-list', name: 'PDF List', icon:  InformationCircleIcon},
       // { path: '/shopify-analytics', name: 'Shopify Analytics', icon: ChartBarIcon },
       { path: '/pdf-editor', name: 'PDF Editor', icon: BanknotesIcon },
-    //   { path: '/api', name: 'API', icon: CodeBracketSquareIcon },
+      { path: '/chat-rag', name: 'RAG Chat UI', icon: CodeBracketSquareIcon },
       { path: '/users', name: 'Users', icon: UserIcon },
       { path: '/companies', name: 'Companies', icon: DocumentTextIcon },
 

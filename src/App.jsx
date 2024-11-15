@@ -5,11 +5,13 @@ import Pdfeditor from './components/Pdfeditor';
 import PdfListPage from './components/PdfListPage';
 import CompaniesPage from './components/CompaniesPage';
 import UsersPage from './components/UsersPage';
+import ChatUIPage from './components/ChatUI/ChatUIPage';
 
 function App() {
 
   return (
     <>
+      
        <BrowserRouter >
         <Routes>
           <Route path="/" element={<Sidebar />} >
@@ -18,10 +20,7 @@ function App() {
             <Route path="pdf-list" element={<PdfListPage />} />
             <Route path="companies" element={<CompaniesPage />} />
             <Route path="users" element={<UsersPage />} />
-
-            
-
-            
+            <Route path="chat-rag" element={<ChatUIPage />} />
             
           </Route>
            
