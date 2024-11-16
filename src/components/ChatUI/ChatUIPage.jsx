@@ -7,59 +7,106 @@ import axios from 'axios';
 
 const ChatUIPage = () => {
   const [file, setFile] = useState(null);
+  const [pdfId, setPdfId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Inside your App component
-  const handleFileUpload = (uploadedFile) => {
+  const handleFileUpload = async (uploadedFile) => {
     setFile(uploadedFile);
-    
-    // Get the CSRF token from cookies
-    const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1];
 
-    // Prepare FormData to send with the POST request
+    // Prepare FormData for the file upload
     const formData = new FormData();
     formData.append('pdf_file', uploadedFile);
 
-    // Make the POST request to the API
-    axios.post('https://virtual-try-on.eshtyle.com/upload_pdf', formData,
-      {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data', // Ensure it's set correctly
+    try {
+      const uploadResponse = await axios.post(
+        'https://virtual-try-on.eshtyle.com/upload_pdf',
+        formData,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
         }
-      }
-    )
-      .then(response => {
-        console.log('File uploaded successfully:', response.data);
-        setMessages([{
+      );
+
+      console.log('File uploaded successfully:', uploadResponse.data);
+
+      // Save the uploaded file's ID for further queries
+      setPdfId(uploadResponse.data.id);
+
+      // Notify user of successful upload
+      setMessages([
+        {
           role: 'assistant',
-          content: `I've received your file: "${uploadedFile.name}". What would you like to know about it?`
-        }]);
-      })
-      .catch(error => {
-        console.error('Error uploading file:', error);
-        setMessages([{
+          content: `I've received your file: "${uploadedFile.name}". What would you like to know about it?`,
+        },
+      ]);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setMessages([
+        {
           role: 'assistant',
-          content: 'There was an error uploading your file. Please try again.'
-        }]);
-      });
+          content: 'There was an error uploading your file. Please try again.',
+        },
+      ]);
+    }
   };
 
-  const handleSendMessage = (content) => {
+  const handleSendMessage = async (content) => {
     // Add user message
     const newMessages = [...messages, { role: 'user', content }];
     setMessages(newMessages);
-    
-    // Simulate AI response
+
+    // Simulate server processing
     setIsProcessing(true);
-    setTimeout(() => {
-      setMessages([...newMessages, {
-        role: 'assistant',
-        content: "This is a simulated response. In a real implementation, this would process your question against the uploaded PDF content using RAG techniques."
-      }]);
+
+    try {
+      if (pdfId) {
+        // Make the query request to the server
+        const queryResponse = await axios.post(
+          'https://virtual-try-on.eshtyle.com/query_pdf',
+          { query: content, id: pdfId },
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        console.log('Query response:', queryResponse.data);
+
+        // Add the server's response to the chat
+        setMessages([
+          ...newMessages,
+          {
+            role: 'assistant',
+            content: queryResponse.data.response || 'No response received from the server.',
+          },
+        ]);
+      } else {
+        console.error('No PDF ID available. Please upload a file first.');
+        setMessages([
+          ...newMessages,
+          {
+            role: 'assistant',
+            content: 'Please upload a file before asking questions.',
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error('Error querying the PDF:', error);
+      setMessages([
+        ...newMessages,
+        {
+          role: 'assistant',
+          content: 'There was an error processing your request. Please try again.',
+        },
+      ]);
+    } finally {
       setIsProcessing(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -103,6 +150,6 @@ const ChatUIPage = () => {
       </main>
     </div>
   );
-}
+};
 
 export default ChatUIPage;
