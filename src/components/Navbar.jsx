@@ -32,7 +32,7 @@ const Navbar = () => {
   return (
     <div className="sticky top-0 w-full overflow-hidden z-20 py-8 bg-white border-b border-gray-300 px-10 shadow-lg">
             <div className='flex justify-between'>
-              <h2 className="text-xl font-bold">Zenrevo</h2>
+              <h2 className="text-xl font-bold">SuperAdmin</h2>
               
               <div className='flex gap-8'>
                    
