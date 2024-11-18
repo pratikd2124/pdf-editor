@@ -55,7 +55,7 @@ const currentRouteName = links.find(link => link.path === location.pathname)?.na
       {/* Sidebar */}
       <div ref={sidebarRef}  className={`text-sm fixed md:sticky inset-0 bg-black border-r border-gray-700 text-white w-64 md:h-screen transform ${isOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out z-30 md:relative md:translate-x-0`}>
         <div className="p-4">
-          <h1 className="text-2xl font-bold">Zenrevo Admin</h1>
+          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           <ul className="mt-10 space-y-2">
           {links.map(link => (
               <li key={link.path}>
